@@ -24,8 +24,11 @@ struct ContentView: View {
     }
     
     var body: some View {
-        CollectionLoadingView(count: 3, height: 100)
-            .padding(.horizontal)
+        VStack {
+            CollectionLoadingView(count: 3, height: 100)
+            Spacer()
+        }
+        .padding(.horizontal)
     }
 }
 
@@ -40,9 +43,8 @@ struct LoadingView: View {
     let height: CGFloat
     
     @State var offset: CGFloat = LoadingView.startingOffset
-    @State var shouldAnimate: Bool = true
     
-//    MARK: Class Methods
+    //    MARK: Class Methods
     private func beginAnimation(_ width: CGFloat) {
         self.offset = LoadingView.startingOffset
         withAnimation { self.offset = width }
@@ -60,7 +62,7 @@ struct LoadingView: View {
         colorScheme == .dark ? .white : .black
     }
     
-//    MARK: ViewBuilders
+    //    MARK: ViewBuilders
     @ViewBuilder
     private func makeGradient(facingRight: Bool) -> some View {
         LinearGradient(stops: [.init(color: highlightColor.opacity(0.2), location: 0.55),
@@ -78,45 +80,45 @@ struct LoadingView: View {
         .blur(radius: LoadingView.blur)
         .scaleEffect(x: 0.9)
     }
-
-//    MARK: Body
+    
+    //    MARK: Body
     var body: some View {
-            HStack(alignment: .top) {
-                UniversalText("Hello, this is a secret message",
-                              size: Constants.UIDefaultTextSize, wrap: false)
+        HStack(alignment: .top) {
+            UniversalText("Hello, this is a secret message",
+                          size: Constants.UIDefaultTextSize, wrap: false)
+            .foregroundStyle(.clear)
+            .rectangularBackground(7, style: secondaryStyle, cornerRadius: 10)
+            
+            UniversalText("hi :)",
+                          size: Constants.UIDefaultTextSize, wrap: false)
+            .foregroundStyle(.clear)
+            .rectangularBackground(7, style: secondaryStyle, cornerRadius: 10)
+            
+            Spacer()
+            
+            Rectangle()
                 .foregroundStyle(.clear)
-                .rectangularBackground(7, style: secondaryStyle, cornerRadius: 10)
-                
-                UniversalText("hi :)",
-                              size: Constants.UIDefaultTextSize, wrap: false)
-                .foregroundStyle(.clear)
-                .rectangularBackground(7, style: secondaryStyle, cornerRadius: 10)
-                
-                Spacer()
-                
-                Rectangle()
-                    .foregroundStyle(.clear)
-                    .frame(width: 10, height: height - 30)
-                
-                UniversalText("hello",
-                              size: Constants.UIDefaultTextSize, wrap: false)
-                .foregroundStyle(.clear)
-                .rectangularBackground(7, style: secondaryStyle, cornerRadius: 10)
-            }
-            .padding()
-            .overlay { GeometryReader { geo in
-                makeBlur()
-                    .frame(width: LoadingView.width)
-                    .offset(x: offset)
-                    .opacity(0.5)
-                    .animation(Animation
-                        .easeInOut(duration: 2)
-                        .delay(0.6)
-                        .repeatForever(autoreverses: false),
-                               value: offset)
-                    .onAppear { beginAnimation(UIScreen.main.bounds.width + LoadingView.blur + 15) }
-            }}
-        .rectangularBackground(0, style: .secondary)
+                .frame(width: 10, height: height - 30)
+            
+            UniversalText("hello",
+                          size: Constants.UIDefaultTextSize, wrap: false)
+            .foregroundStyle(.clear)
+            .rectangularBackground(7, style: secondaryStyle, cornerRadius: 10)
+        }
+        .padding()
+        .overlay { GeometryReader { geo in
+            makeBlur()
+                .frame(width: LoadingView.width)
+                .offset(x: offset)
+                .opacity(0.5)
+                .animation(Animation
+                    .easeInOut(duration: 2)
+                    .delay(0.6)
+                    .repeatForever(autoreverses: false),
+                           value: offset)
+                .onAppear { beginAnimation(geo.size.width + LoadingView.blur) }
+        }}
+        .rectangularBackground(0, style: .secondary, shadow: true)
     }
 }
 
